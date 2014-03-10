@@ -8,17 +8,21 @@
 size_t StrLen( const char* str )
 {
 	size_t i;
-	if( str == NULL )
-	{
+	int a, b, k;
+
+	k = StrLen( str );
+
+	a = k++;
+	b = ++k;
+
+	printf( "%d %d", a, b );
+
+	if( str == NULL ) {
 		return 0;
 	}
-	for( i = 0;; i++ )
-	{
-		if( *str == 0 )
-		{
-			break;
-		}
-		str++;
+	
+	for( i = 0; *str != 0; i++, str++ ) {
+		; /* NULL */
 	}
 	return i;
 }
@@ -26,32 +30,36 @@ size_t StrLen( const char* str )
 void* MemChr( const void* buf, char c, size_t len )
 {
 	size_t i;
-	if( buf == NULL ) {
+	//const char *ptr = buf;
+	if( buf == NULL )
+	{
 		return NULL;
 	}
 
-	for( i = 0; i < len; i++ ) {
-		if( *(char*)buf == c ) {
+	for( i = 0; i < len; i++ )
+	{
+		if( *(char*)buf == c )
+		{
 			return (void*)buf;
 		}
-		( (char*)buf )++;
+		( *( (char**)( &buf ) ) )++;
 	}
 	return NULL;
 }
 
 bool IsDigit( char chr )
 {
-	return chr >= 0x30 && chr <= 0x39;
+	return ( chr >= 0x30 ) && ( chr <= 0x39 );
 }
 
 bool IsUpper( char chr )
 {
-	return chr >= 0x41 && chr <= 0x5A;
+	return ( chr >= 0x41 ) && ( chr <= 0x5A );
 }
 
 bool IsLower( char chr )
 {
-	return chr >= 0x61 && chr <= 0x7A;
+	return ( chr >= 0x61 ) && ( chr <= 0x7A );
 }
 
 bool IsAlpha( char chr )
@@ -64,7 +72,7 @@ bool IsAlnum( char chr )
 	return IsDigit( chr ) || IsAlpha( chr );
 }
 
-void removeWords( char *str, char *chars )
+void RemoveWords( char *str, char *chars )
 {
 	size_t i, wordLen, charsLen;
 
@@ -80,11 +88,11 @@ void removeWords( char *str, char *chars )
 			}
 			str++;
 		}
-		//word = str;
 		
-		for( wordLen = 0; IsAlnum( str[wordLen] ); wordLen++ );
-
-		//charsLen2 = charsLen;
+		for( wordLen = 0; IsAlnum( str[wordLen] ); wordLen++ )
+		{
+			; /* NULL */
+		}
 		
 		for( i = 0; i < charsLen; i++ )
 		{
@@ -150,3 +158,35 @@ char* Input( void )
 }
 
 #undef BUF_LEN
+
+char* CheckedInput( bool checkFunc( char ) )
+{
+	char *str;
+	size_t i, len;
+	bool k;
+
+	do
+	{
+		k = false;
+		str = Input();
+		if( str == NULL )
+		{
+			puts( "Something wrong" );
+			return NULL;
+		}
+		len = StrLen( str );
+		if( checkFunc != NULL )
+		{
+			for( i = 0; i < len; i++ )
+			{
+				if( checkFunc( str[i] ) == false )
+				{
+					k = true;
+					puts( "Wrong input, try again" );
+					free( str );
+				}
+			}
+		}
+	} while( k );
+	return str;
+}
